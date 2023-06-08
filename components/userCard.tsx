@@ -14,7 +14,7 @@ import SvgIconStyle from './sgvIconStyle';
 // ----------------------------------------------------------------------
 
 const OverlayStyle = styled('div')(({ theme }) => ({
-  ...cssStyles().bgBlur({ blur: 2, color: theme.palette.primary.darker }),
+  ...cssStyles().bgBlur({ blur: 2, color: theme.palette.primary.dark }),
   top: 0,
   zIndex: 8,
   content: "''",
