@@ -110,25 +110,6 @@ export default function AccountGeneral() {
     }
   };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //borrar datos
  
 const handleDelete = (id: string) => {
