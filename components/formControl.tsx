@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { Box, Grid, Card, Stack, Typography } from '@mui/material';
+import { Box, Grid, Card, Stack, Typography,Button } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import FormProvider from './formProvider';
 import RHFTextField from './rhfTextflied';
 import { db } from '@/pages/api/firebase';
 
 type UserDataProps = {
+  id: string;
   name: string;
   photoURL: string;
 };
@@ -48,7 +49,12 @@ export default function AccountGeneral() {
     db.collection('user')
       .get()
       .then((querySnapshot) => {
-        const data = querySnapshot.docs.map((doc) => doc.data() as UserDataProps);
+        const data = querySnapshot.docs.map((doc) => {
+          return {
+            id: doc.id,
+            ...doc.data(),
+          } as UserDataProps;
+        });
         setUserData(data);
       })
       .catch((error) => {
@@ -67,38 +73,136 @@ export default function AccountGeneral() {
     reset,
   } = methods;
 
+  //SUBIR
   const onSubmit = (data: FormValuesProps, e: any) => {
-    // Guardar datos en Firebase
-    db.collection('user')
-      .add({
-        name: data.displayName,
-        photoURL: data.photoURL,
-      })
-      .then((docRef) => {
-        console.log('Document written with ID: ', docRef.id);
-        reset({});
-        fetchUserData(); // Actualizar userData después de guardar los datos
-      })
-      .catch((error) => {
-        console.error('Error writing document: ', error);
-      });
+    if (editingId) {
+      // Actualizar datos en Firebase
+      db.collection('user')
+        .doc(editingId)
+        .update({
+          displayName: data.displayName,
+          photoURL: data.photoURL,
+        })
+        .then(() => {
+          console.log('Document successfully updated!');
+          fetchUserData(); // Actualizar userData después de actualizar los datos
+          reset({});
+          setEditingId(null); // Restablecer editingId a null después de guardar los datos
+        })
+        .catch((error) => {
+          console.error('Error updating document: ', error);
+        });
+    } else {
+      // Guardar datos en Firebase
+      db.collection('user')
+        .add({
+          displayName: data.displayName,
+          photoURL: data.photoURL,
+        })
+        .then((docRef) => {
+          console.log('Document written with ID: ', docRef.id);
+          fetchUserData(); // Actualizar userData después de guardar los datos
+          reset({});
+        })
+        .catch((error) => {
+          console.error('Error writing document: ', error);
+        });
+    }
   };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//borrar datos
+ 
+const handleDelete = (id: string) => {
+  if (editingId === id) {
+    setEditingId(null); // Restablecer editingId a null si se está editando el usuario que se está eliminando
+  }
+  db.collection('user')
+    .doc(id)
+    .delete()
+    .then(() => {
+      console.log('Document successfully deleted!');
+      const updatedData = userData.filter((data) => data.id !== id);
+      setUserData(updatedData);
+    })
+    .catch((error) => {
+      console.error('Error removing document: ', error);
+    });
+}; 
+ 
+
+//EDITAR DATOS 
+const [editingId, setEditingId] = useState<string | null>(null);
+
+const handleEdit = (id: string) => {
+  db.collection('user')
+    .doc(id)
+    .get()
+    .then((doc) => {
+      if (doc.exists) {
+        const data = doc.data() as FormValuesProps;
+        setValue('displayName', data.displayName);
+        setValue('photoURL', data.photoURL);
+      } else {
+        console.error('No such document!');
+      }
+    })
+    .catch((error) => {
+      console.error('Error getting document:', error);
+    });
+};
+
 
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Grid container spacing={3}>
         <Grid item xs={12} md={4}>
-          {userData.map((data, index) => (
-            <Card key={index} sx={{ py: 10, px: 3, textAlign: 'center' }}>
-              <img
-                src={data.photoURL}
-                alt="Profile Picture"
-                style={{ width: '100px', height: '100px' }}
-              />
-              <Typography variant="h5" component="h2">
-                {data.name}
-              </Typography>
-            </Card>
+          {userData.map((data) => (
+
+
+<Card key={data.id} sx={{ py: 10, px: 3, textAlign: 
+'center' }}>
+  {editingId === data.id ? (
+    <Typography variant="h5" component="h2">
+      Editando {data.name}
+    </Typography>
+  ) : (
+    <>
+      <img
+        src={data.photoURL}
+        alt="Profile Picture"
+        style={{ width: '100px', height: '100px' }}
+      />
+      <Typography variant="h5" component="h2">
+        {data.displayName} {/* Mostrar el valor de 
+        displayName */}
+      </Typography>
+      <Button  variant="contained" onClick={() => 
+handleDelete(data.id)}>Eliminar</Button>
+      <Button  variant="contained" onClick={()=> 
+setEditingId(data.id)}>Editar</Button>
+    </>
+  )}
+</Card>
+
           ))}
         </Grid>
 
@@ -132,6 +236,96 @@ export default function AccountGeneral() {
     </FormProvider>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
