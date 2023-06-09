@@ -3,8 +3,14 @@ import Image from 'next/image'
 import { Inter } from 'next/font/google'
 import styles from '@/styles/Home.module.css'
 import AccountGeneral from '@/components/formControl'
-import MyForm from '@/components/formControl'
+import Card2 from '@/components/card'
+
 const inter = Inter({ subsets: ['latin'] })
+/*const deleteUser=(id:any)=> {
+  const arrayFiltrado = users.filter(user=>user.id !== id)
+    setUsers(arrayFiltrado);
+  }*/
+
 
 
 
@@ -19,7 +25,8 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
-<MyForm></MyForm>
+      <AccountGeneral></AccountGeneral>
+<Card2></Card2>
       </main>
     </>
   )

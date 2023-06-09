@@ -1,8 +1,11 @@
-import firebase  from "firebase/app";
-import "firebase/firestore";
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/firestore';
+
+if (!firebase.apps.length) {
+  const firebaseConfig = {
 
 // Your web app's Firebase configuration
-const firebaseConfig = {
   apiKey: "AIzaSyCF1KhJSaBc7Ti6BMDal4Z7pSOuxWn_pKM",
   authDomain: "krud-82ac2.firebaseapp.com",
   projectId: "krud-82ac2",
@@ -12,11 +15,16 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = firebase.initializeApp(firebaseConfig);
-export const db = app.firestore();
 
 
 
+firebase.initializeApp(firebaseConfig);
+}
+
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+export { auth, db };
 
 
 

@@ -3,7 +3,6 @@ import { styled } from '@mui/material/styles';
 import { Box, Card, Avatar, Divider, Typography, Stack } from '@mui/material';
 // utils
 import cssStyles from './cssStyles';
-
 // @types
 import { UserData } from './user';
 // components
